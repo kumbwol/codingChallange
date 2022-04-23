@@ -3,9 +3,28 @@ function readline(): string
     return "";
 }
 
+export interface IEntityData
+{
+    id: number,
+    type: number,
+    x: number,
+    y: number,
+    shieldLife: number,
+    isControlled: number,
+    health: number,
+    vx: number,
+    vy: number,
+    nearBase: number,
+    threatFor: number,
+    distanceFromBase?: number
+}
+
 export class ReadData
 {
+    public baseX: number;
+    public baseY: number;
     public heroesPerPlayer: number;
+    public entities: IEntityData[];
 
     constructor()
     {
@@ -14,6 +33,8 @@ export class ReadData
 
     public readTick()
     {
+        this.entities = [];
+
         for (let i = 0; i < 2; i++)
         {
             var inputs = readline().split(' ');
@@ -36,14 +57,30 @@ export class ReadData
             const vy = parseInt(inputs[8]);
             const nearBase = parseInt(inputs[9]); // 0=monster with no target yet, 1=monster targeting a base
             const threatFor = parseInt(inputs[10]); // Given this monster's trajectory, is it a threat to 1=your base, 2=your opponent's base, 0=neither
+
+            const entity: IEntityData = {
+                id: id,
+                type: type,
+                x: x,
+                y: y,
+                shieldLife: shieldLife,
+                isControlled: isControlled,
+                health: health,
+                vx: vx,
+                vy: vy,
+                nearBase: nearBase,
+                threatFor: threatFor
+            }
+
+            this.entities.push(entity);
         }
     }
 
     public readInit()
     {
         var inputs = readline().split(' ');
-        const baseX = parseInt(inputs[0]); // The corner of the map representing your base
-        const baseY = parseInt(inputs[1]);
+        this.baseX = parseInt(inputs[0]); // The corner of the map representing your base
+        this.baseY = parseInt(inputs[1]);
         this.heroesPerPlayer = parseInt(readline()); // Always 3
     }
 
